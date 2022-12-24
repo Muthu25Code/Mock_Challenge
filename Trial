@@ -1,0 +1,39 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+import seaborn as sns
+
+
+df_sample = pd.read_csv('Sample_1.csv')
+df_full_sample = pd.read_excel('Sample_1_Full.xlsx')
+
+df_full = df_sample.merge(df_full_sample, left_on='Running Total', right_on='Final')
+
+df_full_sample['WAsum'] = df_full_sample[['Assn 1/20', 'Assn 2/30']].sum(axis=1)/50*100
+
+def grade(col):
+    for item in range(74):
+        if (col[item] <= 100) and (col[item] >= 91):
+            col[item] = 'A+'
+        elif (col[item] < 91) and (col[item] >= 75):
+            col[item] = 'A'
+        elif (col[item] < 75) and (col[item] >= 60):
+            col[item] = 'B'
+        elif (col[item] < 60) and (col[item] >= 50):
+            col[item] = 'C'
+        elif (col[item] < 50) and (col[item] >= 0):
+            col[item] = 'F'
+            
+final = []
+df_full_sample['Grade'] = df_full_sample['Final']
+df_full_sample['Grade_1'] = df_sample['Running Total']
+df_full_sample['Grade_2'] = df_full_sample['Grade_1']
+
+for i in range(74):
+    final.append(df_full_sample['Grade_2'][i])
+
+final_grade = grade(final)
+
+df_final = pd.DataFrame(final)
+dff = pd.concat([df_full_sample, df_final], ignore_index=True)
+
